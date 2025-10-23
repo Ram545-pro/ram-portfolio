@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bandi SriRam Reddy — Portfolio</title>
+  <meta name="description" content="Professional portfolio — UI/UX Designer & Frontend Developer" />
+  <!-- Tailwind CDN (quick demo) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Small custom styles for nicer transitions and fonts -->
+  <style>
+    :root{
+      --accent: #6366f1; /* indigo-500 */
+      --muted: #6b7280;  /* gray-500 */
+    }
+    html[data-theme='dark'] {
+      --bg: #0f172a; --card: #0b1220; --text: #e6eef8; --muted: #9aa6bb;
+    }
+    html[data-theme='light'] {
+      --bg: #f8fafc; --card: #ffffff; --text: #0b1220; --muted: #6b7280;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: background 300ms ease, color 300ms ease;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    html[data-theme='light'] .card {
+      background: var(--card);
+      border: 1px solid rgba(15,23,42,0.04);
+    }
+    /* soft entrance */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px) scale(0.995);
+      transition: opacity 520ms cubic-bezier(.2,.9,.3,1), transform 520ms cubic-bezier(.2,.9,.3,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    /* typing cursor */
+    .typing > .cursor {
+      display:inline-block;
+      width:2px;
+      height:1.1em;
+      background:var(--accent);
+      margin-left:6px;
+      vertical-align:middle;
+      animation: blink 1s steps(2) infinite;
+    }
+    @keyframes blink { to { opacity: 0 } }
+
+    /* project hover shine */
+    .project-card {
+      transition: transform 300ms cubic-bezier(.2,.9,.3,1), box-shadow 300ms;
+      will-change: transform;
+    }
+    .project-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 15px 40px rgba(2,6,23,0.45);
+    }
+
+    /* small responsive tweaks */
+    @media (max-width:640px){
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    /* toast */
+    #toast {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      z-index: 60;
+      min-width: 220px;
+      max-width: 320px;
+    }
+  </style>
+</head>
+<body class="font-sans">
+
+  <!-- Top navbar -->
+  <header class="sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a class="flex items-center gap-3" href="#">
+        <div class="w-10 h-10 rounded-md flex items-center justify-center font-bold text-white" style="background:linear-gradient(135deg,#6366f1,#06b6d4)">YN</div>
+        <div class="leading-tight">
+          <div class="text-sm font-semibold" style="color:var(--text)">Bandi SriRam Reddy</div>
+          <div class="text-xs" style="color:var(--muted)">UI/UX & Frontend Developer</div>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm" aria-label="Main navigation">
+        <a href="#work" class="hover:text-indigo-400" style="color:var(--text)">Work</a>
+        <a href="#about" class="hover:text-indigo-400" style="color:var(--text)">About</a>
+        <a href="#skills" class="hover:text-indigo-400" style="color:var(--text)">Skills</a>
+        <a href="#contact" class="hover:text-indigo-400" style="color:var(--text)">Contact</a>
+        <a href="resume.pdf" class="ml-2 inline-flex items-center px-3 py-2 border rounded-md text-sm" style="border-color:rgba(99,102,241,0.18);color:var(--text);">Resume</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" aria-label="Toggle theme" class="p-2 rounded-md border" title="Toggle dark / light">
+          <!-- icon changes in JS -->
+          <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--text)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m7.78-9H21M3 12h1m12.364 6.364l-.707.707M6.343 6.343l-.707.707m12.728 0l.707.707M6.343 17.657l.707.707" /></svg>
+        </button>
+
+        <!-- mobile menu button -->
+        <button id="menuBtn" class="p-2 rounded-md border md:hidden" aria-label="Open menu" style="color:var(--text)">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu (simple) -->
+  <div id="mobileMenu" class="md:hidden fixed inset-x-4 top-20 z-40 card rounded-xl p-4 shadow-lg hidden">
+    <div class="flex flex-col gap-3">
+      <a href="#work" class="py-2 px-3 rounded-md">Work</a>
+      <a href="#about" class="py-2 px-3 rounded-md">About</a>
+      <a href="#skills" class="py-2 px-3 rounded-md">Skills</a>
+      <a href="#contact" class="py-2 px-3 rounded-md">Contact</a>
+      <a href="resume.pdf" class="py-2 px-3 rounded-md border text-center">Resume</a>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-6 py-12">
+    <!-- HERO -->
+    <section class="grid hero-grid md:grid-cols-2 gap-8 items-center">
+      <div class="space-y-4">
+        <p class="text-indigo-400 font-medium">Hello, I’m</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight" style="color:var(--text)">
+          Bandi SriRam Reddy
+          <span class="block mt-3 text-xl font-medium text-[color:var(--muted)]">I design & build beautiful, accessible web experiences.</span>
+        </h1>
+
+        <p class="mt-4 max-w-xl text-[color:var(--muted)]">I’m a product-minded designer & frontend developer who turns ideas into polished interfaces. I focus on measurable outcomes: faster load times, clearer flows, and inclusive design.</p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#work" class="inline-flex items-center px-5 py-3 bg-indigo-600 text-white rounded-md shadow-sm hover:opacity-95">See my work</a>
+          <a href="#contact" class="inline-flex items-center px-5 py-3 border rounded-md" style="color:var(--text)">Contact me</a>
+        </div>
+
+        <!-- Dynamic typing -->
+        <div class="mt-6 text-sm text-[color:var(--muted)]">
+          <span class="typing" aria-hidden="true"><span id="typingText"></span><span class="cursor"></span></span>
+          <div class="sr-only" aria-live="polite" id="srTyping"></div>
+        </div>
+
+        <div class="mt-6 text-[color:var(--muted)] text-sm">
+          <strong>Available for freelance & full-time roles.</strong> Based in India • Open to remote.
+        </div>
+      </div>
+
+      <div class="card rounded-2xl overflow-hidden shadow-lg">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=8a8a1e9b2a8a1b9a2a1d8e9e1b1f6f7" alt="showcase" class="w-full h-80 object-cover">
+      </div>
+    </section>
+
+    <!-- Selected Work -->
+    <section id="work" class="mt-16">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-semibold reveal">Selected Work</h2>
+        <p class="text-sm text-[color:var(--muted)] reveal">Case studies & product work — concise and outcome-focused.</p>
+      </div>
+
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Project 1 -->
+        <article class="project-card card rounded-xl overflow-hidden reveal" tabindex="0" aria-labelledby="p1">
+          <div class="relative">
+            <img src="https://via.placeholder.com/900x600?text=Project+1" alt="Project 1" class="w-full h-44 object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
+          </div>
+          <div class="p-4">
+            <h3 id="p1" class="font-semibold text-lg" style="color:var(--text)">Project One</h3>
+            <p class="text-xs text-indigo-400 mt-1">Role — Lead Designer</p>
+            <p class="mt-3 text-sm text-[color:var(--muted)]">Short summary of the project, your responsibilities and a measurable outcome (e.g., improved conversion by 25%).</p>
+            <div class="mt-4 flex items-center justify-between">
+              <a href="#" class="text-sm font-medium" style="color:var(--accent)">View case study →</a>
+              <span class="text-xs text-[color:var(--muted)]">3 wk • 2024</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project-card card rounded-xl overflow-hidden reveal" tabindex="0" aria-labelledby="p2">
+          <img src="https://via.placeholder.com/900x600?text=Project+2" alt="Project 2" class="w-full h-44 object-cover">
+          <div class="p-4">
+            <h3 id="p2" class="font-semibold text-lg" style="color:var(--text)">Brand Refresh</h3>
+            <p class="text-xs text-indigo-400 mt-1">Role — Brand & Visual</p>
+            <p class="mt-3 text-sm text-[color:var(--muted)]">Logo, guidelines and marketing visuals that improved brand perception and recall.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <a href="#" class="text-sm font-medium" style="color:var(--accent)">View assets →</a>
+              <span class="text-xs text-[color:var(--muted)]">6 wk • 2023</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project-card card rounded-xl overflow-hidden reveal" tabindex="0" aria-labelledby="p3">
+          <img src="https://via.placeholder.com/900x600?text=Project+3" alt="Project 3" class="w-full h-44 object-cover">
+          <div class="p-4">
+            <h3 id="p3" class="font-semibold text-lg" style="color:var(--text)">E-commerce Redesign</h3>
+            <p class="text-xs text-indigo-400 mt-1">Role — Frontend</p>
+            <p class="mt-3 text-sm text-[color:var(--muted)]">Checkout & product page redesign that reduced drop-offs and improved speed.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <a href="#" class="text-sm font-medium" style="color:var(--accent)">Read case study →</a>
+              <span class="text-xs text-[color:var(--muted)]">4 wk • 2024</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="mt-16 card rounded-2xl p-8 reveal">
+      <div class="md:flex items-center gap-8">
+        <img class="w-36 h-36 rounded-lg object-cover flex-shrink-0" src="https://via.placeholder.com/400x400?text=Your+Photo" alt="Your photo">
+        <div>
+          <h3 class="text-2xl font-semibold" style="color:var(--text)">About me</h3>
+          <p class="mt-3 text-[color:var(--muted)]">I’m a multidisciplinary product designer and frontend developer — I blend UI design, usability research and front-end engineering to create products that people love and that perform. My work emphasises accessibility, speed and clarity.</p>
+          <ul class="mt-4 grid sm:grid-cols-2 gap-2 text-sm text-[color:var(--muted)]">
+            <li><strong>Tools:</strong> Figma • React • Tailwind • Storybook</li>
+            <li><strong>Specialities:</strong> Design systems • UX research • Accessibility</li>
+            <li><strong>Location:</strong> India • Remote friendly</li>
+            <li><strong>Education:</strong> Your Degree • Your Institute</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="mt-16 reveal">
+      <h3 class="text-2xl font-semibold" style="color:var(--text)">Skills & tools</h3>
+      <div class="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card rounded-lg p-4 text-center">
+          <div class="text-lg font-semibold" style="color:var(--text)">React</div>
+          <div class="text-sm text-[color:var(--muted)] mt-1">Component-based UIs & performance</div>
+        </div>
+        <div class="card rounded-lg p-4 text-center">
+          <div class="text-lg font-semibold" style="color:var(--text)">Tailwind CSS</div>
+          <div class="text-sm text-[color:var(--muted)] mt-1">Utility-first styling & responsive systems</div>
+        </div>
+        <div class="card rounded-lg p-4 text-center">
+          <div class="text-lg font-semibold" style="color:var(--text)">Figma</div>
+          <div class="text-sm text-[color:var(--muted)] mt-1">Design systems & prototyping</div>
+        </div>
+        <div class="card rounded-lg p-4 text-center">
+          <div class="text-lg font-semibold" style="color:var(--text)">Accessibility</div>
+          <div class="text-sm text-[color:var(--muted)] mt-1">WCAG-focused design</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="mt-16 card rounded-2xl p-8 reveal">
+      <h3 class="text-2xl font-semibold" style="color:var(--text)">Let’s work together</h3>
+      <p class="text-[color:var(--muted)] mt-2">Have a project or just want to say hi? Send a note — I reply within a couple days.</p>
+
+      <form id="contactForm" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4" novalidate>
+        <div>
+          <label class="text-sm block mb-1 text-[color:var(--muted)]">Name</label>
+          <input name="name" required class="w-full rounded-md border p-3 text-[color:var(--text)]" />
+        </div>
+        <div>
+          <label class="text-sm block mb-1 text-[color:var(--muted)]">Email</label>
+          <input name="email" type="email" required class="w-full rounded-md border p-3 text-[color:var(--text)]" />
+        </div>
+        <div class="md:col-span-2">
+          <label class="text-sm block mb-1 text-[color:var(--muted)]">Message</label>
+          <textarea name="message" rows="5" required class="w-full rounded-md border p-3 text-[color:var(--text)]"></textarea>
+        </div>
+
+        <div class="md:col-span-2 flex items-center gap-4">
+          <button type="submit" class="inline-flex items-center px-5 py-3 bg-indigo-600 text-white rounded-md">Send message</button>
+          <a href="resume.pdf" class="text-sm text-[color:var(--muted)] underline">Download resume</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-sm text-[color:var(--muted)]">
+      <div>© <span id="year"></span> Your Name — Built with care.</div>
+    </footer>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" aria-live="polite" class="hidden">
+    <div class="rounded-md p-4 shadow card">
+      <div id="toastMessage" class="text-sm"></div>
+    </div>
+  </div>
+
+  <script>
+    /**********************
+     * Theme toggle (dark/light) with persistence
+     **********************/
+    (function(){
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      const root = document.documentElement;
+      // Default: follow system preference
+      const stored = localStorage.getItem('site-theme');
+      const preferDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = stored || (preferDark ? 'dark' : 'light');
+      root.setAttribute('data-theme', initial);
+
+      function updateIcon(theme){
+        // simple sun / moon icon swap (inline svg path)
+        if(theme === 'dark'){
+          themeIcon.innerHTML = '<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z\"/>';
+        } else {
+          themeIcon.innerHTML = '<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 3v1m0 16v1m7.78-9H21M3 12h1m12.364 6.364l-.707.707M6.343 6.343l-.707.707m12.728 0l.707.707M6.343 17.657l.707.707\" />';
+        }
+      }
+      updateIcon(initial);
+
+      themeToggle.addEventListener('click', ()=>{
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('site-theme', next);
+        updateIcon(next);
+      });
+    })();
+
+    /**********************
+     * Simple mobile menu toggle
+     **********************/
+    (function(){
+      const menuBtn = document.getElementById('menuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      let open = false;
+      menuBtn?.addEventListener('click', ()=>{
+        open = !open;
+        mobileMenu.style.display = open ? 'block' : 'none';
+      });
+      // hide when clicking outside
+      document.addEventListener('click', (e)=>{
+        if(!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)){
+          mobileMenu.style.display = 'none';
+          open = false;
+        }
+      });
+    })();
+
+    /**********************
+     * Typing effect (no external deps)
+     **********************/
+    (function(){
+      const phrases = [
+        'Frontend Developer',
+        'UI / UX Designer',
+        'React & Tailwind',
+        'Accessible & performant'
+      ];
+      const el = document.getElementById('typingText');
+      const srEl = document.getElementById('srTyping');
+      let idx = 0, char = 0, forward = true;
+      const speed = 60;
+      function tick(){
+        const text = phrases[idx];
+        if(forward){
+          char++;
+          el.textContent = text.slice(0,char);
+          srEl.textContent = el.textContent;
+          if(char === text.length){
+            forward = false;
+            setTimeout(tick, 900);
+            return;
+          }
+        } else {
+          char--;
+          el.textContent = text.slice(0,char);
+          srEl.textContent = el.textContent;
+          if(char === 0){
+            forward = true;
+            idx = (idx + 1) % phrases.length;
+            setTimeout(tick, 160);
+            return;
+          }
+        }
+        setTimeout(tick, speed);
+      }
+      tick();
+    })();
+
+    /**********************
+     * Scroll reveal with IntersectionObserver
+     **********************/
+    (function(){
+      const items = document.querySelectorAll('.reveal');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('visible');
+            // optional: unobserve after visible
+            obs.unobserve(entry.target);
+          }
+        });
+      }, {threshold: 0.12});
+      items.forEach(i => obs.observe(i));
+    })();
+
+    /**********************
+     * Contact form (client-side validation + toast)
+     **********************/
+    (function(){
+      const form = document.getElementById('contactForm');
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+
+      function showToast(msg, success=true){
+        toastMsg.textContent = msg;
+        toast.classList.remove('hidden');
+        toast.style.border = success ? '1px solid rgba(99,102,241,0.18)' : '1px solid rgba(220,38,38,0.2)';
+        setTimeout(()=> { toast.classList.add('hidden'); }, 3800);
+      }
+
+      form?.addEventListener('submit', function(e){
+        e.preventDefault();
+        const data = new FormData(form);
+        const name = (data.get('name') || '').toString().trim();
+        const email = (data.get('email') || '').toString().trim();
+        const message = (data.get('message') || '').toString().trim();
+
+        // basic client-side validation
+        if(!name || !email || !message){
+          showToast('Please fill in all fields.', false);
+          return;
+        }
+        // simple email regex
+        const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+        if(!emailRegex.test(email)){
+          showToast('Please enter a valid email.', false);
+          return;
+        }
+
+        // Demo: here you'd call your API / Netlify functions / Formspree etc.
+        // For now we simulate success
+        console.log('Contact payload:', {name, email, message});
+        showToast('Thanks! Your message has been received — this is a demo.');
+
+        form.reset();
+      });
+    })();
+
+    /**********************
+     * Small niceties
+     **********************/
+    // set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // smooth scroll for anchor links
+    (function(){
+      document.querySelectorAll('a[href^="#"]').forEach(a=>{
+        a.addEventListener('click', function(e){
+          const href = this.getAttribute('href');
+          if(href.length > 1){
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if(target){
+              target.scrollIntoView({behavior:'smooth', block:'start'});
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
